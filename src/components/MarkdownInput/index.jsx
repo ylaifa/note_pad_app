@@ -1,65 +1,82 @@
 import React, { useState, useEffect } from "react";
+import NoteDisplay from "components/NoteDisplay";
 
 const MarkdownInput = () => {
-  const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [title, setTitle] = useState("");
   const [notes, setNotes] = useState([]);
-
+  console.log(notes);
   useEffect(() => {
     console.log("Component is Update");
   }, []);
 
   const changeContent = e => {
-    setContent(e.target.content);
+    setContent(e.target.value);
   };
 
   const changeTitle = e => {
-    setTitle(e.target.content);
+    setTitle(e.target.value);
   };
 
-  const saveForm = e => {
+  const handleSubmit = e => {
     e.preventDefault();
 
     if (content === "" || title === "") {
-      console.log("not ok");
+      console.log("empty");
     } else {
       localStorage.setItem(title, content);
       const i = localStorage.length;
-      const NewObject = [
+      const newNote = [
         {
           id: i,
           title: title,
           description: content
         }
       ];
-      console.log(NewObject);
-      setNotes(notes.concat(NewObject));
+      setNotes([...notes, newNote]);
     }
   };
 
   return (
     <>
-      <form onSubmit={saveForm}>
-        <label>
-          <input
-            type="text"
-            name={content}
-            onChange={changeContent}
-            placeholder="write here.."
-          />
-        </label>
-
-        <label>
-          <input
-            type="text"
-            name={title}
-            onChange={changeTitle}
-            placeholder="title here.."
-          />
-        </label>
+      <NoteDisplay content={content} title={title} />
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>
+            <input
+              type="text"
+              name={title}
+              onChange={changeTitle}
+              placeholder="Enter title"
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            <input
+              type="textarea"
+              name={content}
+              onChange={changeContent}
+              placeholder="Enter content"
+            />
+          </label>
+        </div>
 
         <input type="submit" content="Save me" />
       </form>
+      <h1>My notes :</h1>
+      {notes.map((note, key) => (
+        <div key={key}>
+          <div>
+            {note.map(n => (
+              <div>
+                <h3>Title :</h3> {n.title}
+                <h3>Content :</h3> {n.description}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
     </>
   );
 };
